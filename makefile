@@ -39,7 +39,7 @@ kind-load:
 	kind load docker-image ${IMG_NAME}:${VERSION} --name $(KIND_CLUSTER)
 
 kind-apply:
-	cat zarf/k8s/base/service-pod/base-service.yaml | kubectl apply -f -
+	kustomize build zarf/k8s/kind/service-pod | kubectl apply -f -
 
 kind-logs:
 	kubectl logs -l app=service --all-containers=true -f --tail=100
@@ -49,5 +49,11 @@ kind-restart:
 
 kind-update: build  kind-load kind-restart
 
+kind-update-apply: build  kind-load kind-apply
+
 kind-describe:
 	kubectl describe pod -l app=service
+
+tidy:
+	go mod tidy
+	go mod vendor	
