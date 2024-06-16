@@ -1,9 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+)
 
 var ARG_ENV string
 
 func main() {
-	fmt.Printf("hello %s world!", ARG_ENV)
+	log.Println("starting server...")
+	defer log.Println("server ended")
+	sd := make(chan os.Signal, 1)
+	signal.Notify(sd, syscall.SIGINT, syscall.SIGTERM)
+	<-sd
 }
