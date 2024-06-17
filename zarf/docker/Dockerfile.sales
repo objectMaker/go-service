@@ -1,0 +1,17 @@
+FROM golang:1.22.3-alpine3.20 as sales-image
+ENV CGO_ENABLED=0
+ARG ARG_ENV
+
+COPY . /sales
+
+WORKDIR /sales/app/services/sales-api
+
+RUN go build -ldflags "-X main.ARG_ENV=${ARG_ENV}"
+
+# Run the Go Binary in Alpine.
+FROM alpine:3.20
+ARG ARG_ENV
+
+COPY --from=sales-image /sales/app/services/sales-api/sales-api /sales/sales
+WORKDIR /sales
+CMD ["./sales"]

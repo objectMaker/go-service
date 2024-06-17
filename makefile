@@ -7,11 +7,11 @@ KIND            := kindest/node:v1.30.0
 KIND_CLUSTER    := ardan-starter-cluster
 VERSION := 1.0
 
-IMG_NAME := service-amd64
+IMG_NAME := sales-amd64
 
 build:
 	docker build \
-	-f zarf/docker/Dockerfile.hello \
+	-f zarf/docker/Dockerfile.sales \
 	-t ${IMG_NAME}:${VERSION} \
 	--build-arg ARG_ENV=${ARG_ENV} \
 	.
@@ -21,7 +21,7 @@ kind-up:
 		--image $(KIND) \
 		--name $(KIND_CLUSTER) \
 		--config zarf/k8s/kind/kind-config.yaml
-	kubectl config set-context --current --namespace=service-system
+	kubectl config set-context --current --namespace=sales-system
 
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)
@@ -33,26 +33,26 @@ kind-status:
 	kubectl get pods -o wide --all-namespaces
 
 kind-status-ss:
-	kubectl get pods -o wide --namespace=service-system
+	kubectl get pods -o wide --namespace=sales-system
 
 kind-load:
 	kind load docker-image ${IMG_NAME}:${VERSION} --name $(KIND_CLUSTER)
 
 kind-apply:
-	kustomize build zarf/k8s/kind/service-pod | kubectl apply -f -
+	kustomize build zarf/k8s/kind/sales-pod | kubectl apply -f -
 
 kind-logs:
-	kubectl logs -l app=service --all-containers=true -f --tail=100
+	kubectl logs -l app=sales --all-containers=true -f --tail=100
 
 kind-restart:
-	kubectl rollout restart deployment service-pod
+	kubectl rollout restart deployment sales-pod
 
 kind-update: build  kind-load kind-restart
 
 kind-update-apply: build  kind-load kind-apply
 
 kind-describe:
-	kubectl describe pod -l app=service
+	kubectl describe pod -l app=sales
 
 tidy:
 	go mod tidy
