@@ -1,3 +1,6 @@
+# github.com/ardanlabs/conf/v2 v2.2.0
+## explicit; go 1.13
+github.com/ardanlabs/conf/v2
 # go.uber.org/automaxprocs v1.5.3
 ## explicit; go 1.18
 go.uber.org/automaxprocs/internal/cgroups

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"runtime"
 
+	"github.com/ardanlabs/conf/v2"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -22,6 +24,7 @@ func main() {
 func init() {
 	initMaxprocs()
 	initLogger("sales-api")
+	initConfig()
 
 }
 
@@ -35,6 +38,36 @@ func initMaxprocs() {
 	core := runtime.GOMAXPROCS(0)
 	log.Printf("starting server, env is %s, core is %d", ARG_ENV, core)
 
+}
+
+func initConfig() {
+	cfg := struct {
+		conf.Version
+		Web struct {
+			Port string `conf:"default:0.0.0.0:3000"`
+		}
+	}{
+		Version: conf.Version{
+			Build: ARG_ENV,
+			Desc:  "Sales API' Describes",
+		},
+	}
+	const prefix = "SALES"
+	help, err := conf.Parse(prefix, &cfg)
+	if err != nil {
+		if errors.Is(err, conf.ErrHelpWanted) {
+			fmt.Println(help)
+		}
+		fmt.Println(fmt.Errorf("parsing config: %w", err))
+		os.Exit(1)
+	}
+
+	out, err := conf.String(&cfg)
+	if err != nil {
+		Logger.Fatal("init config failed:", err)
+	}
+	Logger.Infow("start read config: ", "output", out)
+	defer Logger.Infow("initConfig finished")
 }
 
 func initLogger(serviceName string) {

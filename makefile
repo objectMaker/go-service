@@ -9,6 +9,9 @@ VERSION := 1.0
 
 IMG_NAME := sales-amd64
 
+run: 
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
+
 build:
 	docker build \
 	-f zarf/docker/Dockerfile.sales \

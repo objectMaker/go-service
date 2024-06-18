@@ -8,10 +8,14 @@ WORKDIR /sales/app/services/sales-api
 
 RUN go build -ldflags "-X main.ARG_ENV=${ARG_ENV}"
 
+WORKDIR /sales/app/tooling/logfmt
+RUN go build
+
 # Run the Go Binary in Alpine.
 FROM alpine:3.20
 ARG ARG_ENV
 
 COPY --from=sales-image /sales/app/services/sales-api/sales-api /sales/sales
+COPY --from=sales-image /sales/app/tooling/logfmt/logfmt /sales/logfmt
 WORKDIR /sales
-CMD ["./sales"]
+CMD ["./sales","./logfmt"]
