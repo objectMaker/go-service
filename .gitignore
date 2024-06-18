@@ -23,7 +23,7 @@ _test
 .idea/
 *.iml
 *.swp
-
+.history/
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
@@ -39,3 +39,4 @@ _testmain.go
 *.exe
 //*.test
 .vscode/tasks.json
+
