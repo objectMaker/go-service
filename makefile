@@ -9,8 +9,10 @@ VERSION := 1.0
 
 IMG_NAME := sales-amd64
 
+LOGFMT_CMD := go run app/tooling/logfmt/main.go
+  
 run: 
-	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
+	go run app/services/sales-api/main.go | $(LOGFMT_CMD)
 
 build:
 	docker build \
@@ -45,7 +47,7 @@ kind-apply:
 	kustomize build zarf/k8s/kind/sales-pod | kubectl apply -f -
 
 kind-logs:
-	kubectl logs -l app=sales --all-containers=true -f --tail=100
+	kubectl logs -l app=sales --all-containers=true -f --tail=100 | $(LOGFMT_CMD)
 
 kind-restart:
 	kubectl rollout restart deployment sales-pod
