@@ -12,7 +12,7 @@ IMG_NAME := sales-amd64
 LOGFMT_CMD := go run app/tooling/logfmt/main.go
   
 run: 
-	go run app/services/sales-api/main.go | $(LOGFMT_CMD)
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
 build:
 	docker build \
